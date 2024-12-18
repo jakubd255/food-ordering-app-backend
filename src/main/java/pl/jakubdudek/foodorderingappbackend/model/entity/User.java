@@ -12,8 +12,7 @@ import java.util.*;
 @Entity
 @Table(name = "users")
 @Builder
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class User implements UserDetails {

@@ -1,5 +1,6 @@
 package pl.jakubdudek.foodorderingappbackend.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.jakubdudek.foodorderingappbackend.model.entity.User;
@@ -21,7 +22,7 @@ public class UserService {
 
     public UserDto getUserById(Integer id) {
         User user = userRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("User not found")
+                () -> new EntityNotFoundException("User not found")
         );
         return dtoMapper.mapUserToDto(user);
     }

@@ -8,8 +8,7 @@ import java.util.Date;
 @Entity
 @Table(name = "sessions")
 @Builder
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Session {

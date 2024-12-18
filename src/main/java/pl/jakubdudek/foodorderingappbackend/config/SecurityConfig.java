@@ -49,6 +49,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/auth/log-in", "api/auth/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/users", "/api/users/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/categories").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products", "/api/products/{id}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/products").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/products/{id}", "/api/products/{id}/image").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/products/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/files/{name}").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())

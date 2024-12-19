@@ -13,8 +13,8 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class UserService {
-    private UserRepository userRepository;
-    private DtoMapper dtoMapper;
+    private final UserRepository userRepository;
+    private final DtoMapper dtoMapper;
 
     public List<UserDto> getAllUsers() {
         return userRepository.findAll().stream().map(dtoMapper::mapUserToDto).toList();

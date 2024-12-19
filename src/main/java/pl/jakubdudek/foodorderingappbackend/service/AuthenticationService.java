@@ -41,8 +41,8 @@ public class AuthenticationService {
                 .role(Role.ROLE_USER)
                 .build());
 
-        Session session = sessionRepository.save(Session.builder().user(user).build());
-        return dtoMapper.mapSessionToDto(session);
+        Session session = Session.builder().user(user).build();
+        return dtoMapper.mapSessionToDto(sessionRepository.save(session));
     }
 
     public SessionDto login(LoginRequest request) {

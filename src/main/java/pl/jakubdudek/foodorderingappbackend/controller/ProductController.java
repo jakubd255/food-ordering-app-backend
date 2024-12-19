@@ -21,6 +21,11 @@ public class ProductController {
         return ResponseEntity.ok(productService.addProduct(request));
     }
 
+    @PostMapping("/many")
+    public ResponseEntity<List<ProductDto>> addProducts(@RequestBody List<ProductRequest> request) {
+        return ResponseEntity.ok(productService.addProducts(request));
+    }
+
     @GetMapping
     public ResponseEntity<List<ProductDto>> getAllProducts(@RequestParam(required = false) Integer categoryId) {
         return ResponseEntity.ok(productService.getAllProducts(categoryId));

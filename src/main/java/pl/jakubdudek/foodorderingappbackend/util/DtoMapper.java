@@ -37,4 +37,13 @@ public class DtoMapper {
                 product.getVariants().stream().map(this::mapVariantToDto).toList()
         );
     }
+
+    public BasketItemDto mapBasketItemToDto(BasketItem basketItem) {
+        return new BasketItemDto(
+                basketItem.getId(),
+                basketItem.getProduct().getId(),
+                basketItem.getQuantity(),
+                basketItem.getVariant()
+        );
+    }
 }

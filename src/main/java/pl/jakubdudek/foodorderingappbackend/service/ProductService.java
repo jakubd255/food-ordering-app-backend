@@ -27,6 +27,10 @@ public class ProductService {
         return dtoMapper.mapProductToDto(productRepository.save(product));
     }
 
+    public List<ProductDto> addProducts(List<ProductRequest> request) {
+        return request.stream().map(this::addProduct).toList();
+    }
+
     public List<ProductDto> getAllProducts(Integer categoryId) {
         List<Product> products;
         if(categoryId != null) {

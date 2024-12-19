@@ -27,6 +27,7 @@ public class AdminConfig {
                     .password(passwordEncoder.encode(adminPassword))
                     .role(Role.ROLE_ADMIN)
                     .build();
+
             userRepository.save(admin);
             System.out.println("Admin has been created.");
         }

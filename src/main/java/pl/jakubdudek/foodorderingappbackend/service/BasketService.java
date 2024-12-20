@@ -11,7 +11,7 @@ import pl.jakubdudek.foodorderingappbackend.model.entity.User;
 import pl.jakubdudek.foodorderingappbackend.repository.BasketItemRepository;
 import pl.jakubdudek.foodorderingappbackend.repository.ProductRepository;
 import pl.jakubdudek.foodorderingappbackend.util.DtoMapper;
-import pl.jakubdudek.foodorderingappbackend.util.SessionManager;
+import pl.jakubdudek.foodorderingappbackend.util.session.SessionManager;
 
 import java.util.List;
 

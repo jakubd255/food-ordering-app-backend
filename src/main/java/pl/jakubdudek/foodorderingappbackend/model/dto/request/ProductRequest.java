@@ -1,5 +1,9 @@
 package pl.jakubdudek.foodorderingappbackend.model.dto.request;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,8 +16,18 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductRequest {
+    @NotNull
+    @NotEmpty
     private String name;
+
     private String description;
+
+    @NotNull
+    @PositiveOrZero
     private Integer categoryId;
-    private List<VariantRequest> variants;
+
+    @NotNull
+    @NotEmpty
+    @Valid
+    private List<@Valid VariantRequest> variants;
 }

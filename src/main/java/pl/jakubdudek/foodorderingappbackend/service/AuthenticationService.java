@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import pl.jakubdudek.foodorderingappbackend.model.type.Role;
+import pl.jakubdudek.foodorderingappbackend.model.type.UserRole;
 import pl.jakubdudek.foodorderingappbackend.model.entity.Session;
 import pl.jakubdudek.foodorderingappbackend.model.entity.User;
 import pl.jakubdudek.foodorderingappbackend.model.dto.request.LoginRequest;
@@ -16,7 +16,7 @@ import pl.jakubdudek.foodorderingappbackend.model.dto.response.UserDto;
 import pl.jakubdudek.foodorderingappbackend.repository.SessionRepository;
 import pl.jakubdudek.foodorderingappbackend.repository.UserRepository;
 import pl.jakubdudek.foodorderingappbackend.util.DtoMapper;
-import pl.jakubdudek.foodorderingappbackend.util.SessionManager;
+import pl.jakubdudek.foodorderingappbackend.util.session.SessionManager;
 
 @Service
 @AllArgsConstructor
@@ -28,17 +28,17 @@ public class AuthenticationService {
     private final SessionManager sessionManager;
 
     public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByEmail(username).orElseThrow(
-                () -> new UsernameNotFoundException("User not found")
-        );
+        return username -> userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     public SessionDto register(RegisterRequest request) {
         User user = userRepository.save(User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
+                .phone(request.getPhone())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.ROLE_USER)
+                .role(UserRole.ROLE_USER)
                 .build());
 
         Session session = Session.builder().user(user).build();
@@ -46,9 +46,8 @@ public class AuthenticationService {
     }
 
     public SessionDto login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
-                () -> new BadCredentialsException("Invalid email")
-        );
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new BadCredentialsException("Invalid email"));
         if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("Invalid password");
         }

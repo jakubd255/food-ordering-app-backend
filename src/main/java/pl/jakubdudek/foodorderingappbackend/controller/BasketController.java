@@ -1,5 +1,6 @@
 package pl.jakubdudek.foodorderingappbackend.controller;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +17,12 @@ public class BasketController {
     private final BasketService basketService;
 
     @PostMapping
-    public ResponseEntity<BasketItemDto> addItemToBasket(@RequestBody BasketItemRequest request) {
+    public ResponseEntity<BasketItemDto> addItemToBasket(@RequestBody @Valid BasketItemRequest request) {
         return ResponseEntity.ok(basketService.addItemToBasket(request));
     }
 
     @PostMapping("/many")
-    public ResponseEntity<List<BasketItemDto>> addItemsToBasket(@RequestBody List<BasketItemRequest> request) {
+    public ResponseEntity<List<BasketItemDto>> addItemsToBasket(@RequestBody @Valid List<BasketItemRequest> request) {
         return ResponseEntity.ok(basketService.addItemsToBasket(request));
     }
 

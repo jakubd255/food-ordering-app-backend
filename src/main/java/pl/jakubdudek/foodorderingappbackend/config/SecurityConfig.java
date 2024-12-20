@@ -17,7 +17,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.http.HttpMethod;
 import pl.jakubdudek.foodorderingappbackend.service.AuthenticationService;
-import pl.jakubdudek.foodorderingappbackend.util.AuthenticationFilter;
+import pl.jakubdudek.foodorderingappbackend.util.session.AuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -55,6 +55,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/products/{id}", "/api/products/{id}/image").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/products/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/files/{name}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/orders").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())

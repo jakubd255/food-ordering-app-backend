@@ -21,9 +21,8 @@ public class UserService {
     }
 
     public UserDto getUserById(Integer id) {
-        User user = userRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("User not found")
-        );
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
         return dtoMapper.mapUserToDto(user);
     }
 }

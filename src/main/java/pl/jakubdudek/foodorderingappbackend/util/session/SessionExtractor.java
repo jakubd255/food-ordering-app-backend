@@ -1,4 +1,4 @@
-package pl.jakubdudek.foodorderingappbackend.util;
+package pl.jakubdudek.foodorderingappbackend.util.session;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

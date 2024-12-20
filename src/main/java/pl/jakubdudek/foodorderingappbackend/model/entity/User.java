@@ -5,7 +5,7 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import pl.jakubdudek.foodorderingappbackend.model.type.Role;
+import pl.jakubdudek.foodorderingappbackend.model.type.UserRole;
 
 import java.util.*;
 
@@ -25,16 +25,24 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String email;
 
+    private String phone;
+
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private UserRole role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Session> sessions;
 
     @OneToOne(mappedBy = "user",  cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, optional = false)
     private Basket basket;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order> orders;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    private Address address;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

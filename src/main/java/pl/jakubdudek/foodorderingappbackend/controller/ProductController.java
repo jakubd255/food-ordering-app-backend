@@ -1,5 +1,6 @@
 package pl.jakubdudek.foodorderingappbackend.controller;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +18,12 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ProductDto> addProduct(@RequestBody ProductRequest request) {
+    public ResponseEntity<ProductDto> addProduct(@RequestBody @Valid ProductRequest request) {
         return ResponseEntity.ok(productService.addProduct(request));
     }
 
     @PostMapping("/many")
-    public ResponseEntity<List<ProductDto>> addProducts(@RequestBody List<ProductRequest> request) {
+    public ResponseEntity<List<ProductDto>> addProducts(@RequestBody @Valid List<ProductRequest> request) {
         return ResponseEntity.ok(productService.addProducts(request));
     }
 

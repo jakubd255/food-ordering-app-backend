@@ -1,4 +1,4 @@
-package pl.jakubdudek.foodorderingappbackend.util;
+package pl.jakubdudek.foodorderingappbackend.util.session;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

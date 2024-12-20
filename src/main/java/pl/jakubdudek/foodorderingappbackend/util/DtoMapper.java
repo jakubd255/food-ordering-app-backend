@@ -7,6 +7,9 @@ import pl.jakubdudek.foodorderingappbackend.model.entity.*;
 @Component
 public class DtoMapper {
     public UserDto mapUserToDto(User user) {
+        if(user == null) {
+            return null;
+        }
         return new UserDto(
                 user.getId(),
                 user.getName(),
@@ -44,6 +47,34 @@ public class DtoMapper {
                 basketItem.getProduct().getId(),
                 basketItem.getQuantity(),
                 basketItem.getVariant()
+        );
+    }
+
+    public AddressDto mapAddressToDto(Address address) {
+        if(address == null) {
+            return null;
+        }
+        return new AddressDto(
+                address.getStreet(),
+                address.getBuilding(),
+                address.getApartment(),
+                address.getFloor(),
+                address.getCity(),
+                address.getPostalCode()
+        );
+    }
+
+    public OrderDto mapOrderToDto(Order order) {
+        return new OrderDto(
+                order.getId(),
+                mapUserToDto(order.getUser()),
+                order.getItems().stream().map(this::mapBasketItemToDto).toList(),
+                order.getDate(),
+                order.getTotal(),
+                order.getMessage(),
+                order.getType(),
+                order.getStatus(),
+                mapAddressToDto(order.getAddress())
         );
     }
 }

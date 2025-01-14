@@ -1,0 +1,5 @@
+target/*
+!target/app.jar
+uploads/
+*.log
+*.tmp

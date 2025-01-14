@@ -47,7 +47,7 @@ public class AuthenticationService {
 
     public SessionDto login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new BadCredentialsException("Invalid email"));
+                .orElseThrow(() -> new UsernameNotFoundException("Invalid email"));
         if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("Invalid password");
         }

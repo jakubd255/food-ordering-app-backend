@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  app:
+    image: food-ordering-app-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - DB_URL=${DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - food-ordering-app-backend-volume:/app/uploads
+    container_name: food-ordering-app-backend
+volumes:
+  food-ordering-app-backend-volume:
+    name: food-ordering-app-backend-volume

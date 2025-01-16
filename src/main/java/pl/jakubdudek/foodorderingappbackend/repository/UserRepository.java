@@ -16,4 +16,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query("SELECT u FROM User u JOIN FETCH u.sessions s WHERE s.id = :sessionId")
     Optional<User> findUserBySessionId(@Param("sessionId") Integer sessionId);
+
+    boolean existsByEmail(String email);
 }

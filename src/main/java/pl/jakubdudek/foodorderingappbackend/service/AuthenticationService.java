@@ -6,6 +6,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import pl.jakubdudek.foodorderingappbackend.exception.EmailAlreadyExistsException;
+import pl.jakubdudek.foodorderingappbackend.exception.EmailNotFoundException;
+import pl.jakubdudek.foodorderingappbackend.exception.InvalidPasswordException;
 import pl.jakubdudek.foodorderingappbackend.model.type.UserRole;
 import pl.jakubdudek.foodorderingappbackend.model.entity.Session;
 import pl.jakubdudek.foodorderingappbackend.model.entity.User;
@@ -33,6 +36,10 @@ public class AuthenticationService {
     }
 
     public SessionDto register(RegisterRequest request) {
+        if(userRepository.existsByEmail(request.getEmail())) {
+            throw new EmailAlreadyExistsException("This email is taken");
+        }
+
         User user = userRepository.save(User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
@@ -47,9 +54,9 @@ public class AuthenticationService {
 
     public SessionDto login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("Invalid email"));
+                .orElseThrow(() -> new EmailNotFoundException("Invalid email"));
         if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new BadCredentialsException("Invalid password");
+            throw new InvalidPasswordException("Invalid password");
         }
 
         Session session = sessionRepository.save(Session.builder().user(user).build());

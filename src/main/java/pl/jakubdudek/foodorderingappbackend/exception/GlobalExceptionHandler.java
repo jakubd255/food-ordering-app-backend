@@ -21,8 +21,32 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidPasswordException(Exception e) {
+        String message = e.getMessage();
+        Map<String, String> errors = new HashMap<>();
+        errors.put("password", message);
+        return new ResponseEntity<>(errors, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(EmailNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleEmailNotFoundException(Exception e) {
+        String message = e.getMessage();
+        Map<String, String> errors = new HashMap<>();
+        errors.put("email", message);
+        return new ResponseEntity<>(errors, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleEmailAlreadyExistsException(Exception e) {
+        String message = e.getMessage();
+        Map<String, String> errors = new HashMap<>();
+        errors.put("email", message);
+        return new ResponseEntity<>(errors, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<String> handleBadCredentialsException(BadCredentialsException e) {
+    public ResponseEntity<String> handleBadCredentialsException(Exception e) {
         String message = e.getMessage();
         return new ResponseEntity<>(message, HttpStatus.UNAUTHORIZED);
     }
@@ -33,7 +57,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+    public ResponseEntity<String> handleDataIntegrityViolationException(Exception e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
     }
 

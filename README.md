@@ -8,27 +8,22 @@
 - PostgreSQL
 - Docker
 
-## How to run locally
+## Run with Docker
+1. Build project
 ```shell
 mvn clean package
 ```
-### Run with local container database
+2. Build image 
+```shell
+docker build -t food-ordering-app-backend .
+```
+3. Set up environment variables in `.env` file
 ```
 ADMIN_PASSWORD
 DB_USERNAME
 DB_PASSWORD
 ```
+4. Start services with Docker Compose 
 ```shell
-docker-compose -f docker-compose.local.yml up --build
-```
-
-### Run with external database
-```
-ADMIN_PASSWORD
-DB_URL
-DB_USERNAME
-DB_PASSWORD
-```
-```shell
-docker-compose -f docker-compose.external.yml up --build
+docker-compose -f docker-compose.yml up --build
 ```

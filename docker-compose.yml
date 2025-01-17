@@ -10,13 +10,12 @@ services:
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
     volumes:
-      - food-ordering-app-backend-volume:/app/uploads
+      - volume:/app/uploads
     container_name: food-ordering-app-backend
     depends_on:
       - postgres
   postgres:
     image: postgres
-    container_name: postgres-db
     restart: always
     environment:
       POSTGRES_USER: ${DB_USERNAME}
@@ -25,9 +24,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres-volume:/var/lib/postgresql/data
+      - volume:/var/lib/postgresql/data
 volumes:
-  food-ordering-app-backend-volume:
+  volume:
     name: food-ordering-app-backend-volume
-  postgres-volume:
-    name: postgres-volume

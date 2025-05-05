@@ -1,5 +1,6 @@
 package pl.jakubdudek.foodorderingappbackend.util.session;
 
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +20,11 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class AuthenticationFilter extends OncePerRequestFilter {
     private final SessionExtractor sessionExtractor;
-    private final CookieManager cookieManager;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return request.getDispatcherType() != DispatcherType.REQUEST;
+    }
 
     @Override
     protected void doFilterInternal(
@@ -32,7 +37,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-
+        
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -40,11 +45,5 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.setContext(context);
 
         filterChain.doFilter(request, response);
-    }
-
-    private void returnResponse(HttpServletResponse response, int status, String message) throws IOException {
-        response.setStatus(status);
-        response.getWriter().write(message);
-        cookieManager.removeCookies(response);
     }
 }

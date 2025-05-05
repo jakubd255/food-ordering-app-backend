@@ -1,8 +1,7 @@
 package pl.jakubdudek.foodorderingappbackend.model.dto.response;
 
-public record UserDto(
-        Integer id,
+public record RoleDto(
         String name,
-        String email
+        RestaurantShortDto restaurant
 ) {
 }

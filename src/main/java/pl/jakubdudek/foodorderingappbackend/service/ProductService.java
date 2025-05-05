@@ -2,67 +2,89 @@ package pl.jakubdudek.foodorderingappbackend.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pl.jakubdudek.foodorderingappbackend.model.dto.request.ProductRequest;
 import pl.jakubdudek.foodorderingappbackend.model.dto.response.ProductDto;
-import pl.jakubdudek.foodorderingappbackend.model.entity.Category;
 import pl.jakubdudek.foodorderingappbackend.model.entity.Product;
-import pl.jakubdudek.foodorderingappbackend.model.entity.Variant;
 import pl.jakubdudek.foodorderingappbackend.repository.ProductRepository;
-import pl.jakubdudek.foodorderingappbackend.util.DtoMapper;
 import pl.jakubdudek.foodorderingappbackend.util.FileManager;
+import pl.jakubdudek.foodorderingappbackend.util.mapper.ProductMapper;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
-    private final DtoMapper dtoMapper;
     private final FileManager fileManager;
 
+    @CacheEvict(value = "products", allEntries = true)
     public ProductDto addProduct(ProductRequest request) {
-        Product product = mapRequestToProduct(request);
-        return dtoMapper.mapProductToDto(productRepository.save(product));
+        Product product = ProductMapper.mapRequestToProduct(request);
+        return ProductMapper.mapProductToDto(productRepository.save(product));
     }
 
+    @CacheEvict(value = "products", allEntries = true)
     public List<ProductDto> addProducts(List<ProductRequest> request) {
-        return request.stream().map(this::addProduct).toList();
+        List<Product> products = productRepository.saveAll(ProductMapper.mapRequestsToProducts(request));
+        return ProductMapper.mapProductsToDto(products);
     }
 
-    public List<ProductDto> getAllProducts(Integer categoryId) {
-        List<Product> products;
-        if(categoryId != null) {
-            products = productRepository.findByCategoryId(categoryId);
-        }
-        else {
-            products = productRepository.findAll();
-        }
-        return products.stream().map(dtoMapper::mapProductToDto).toList();
+    @Cacheable(value = "products")
+    public List<ProductDto> getAllProducts() {
+        Sort sort = Sort.by(Sort.Order.asc("category.id"), Sort.Order.asc("name"));
+        return ProductMapper.mapProductsToDto(productRepository.findAll(sort));
     }
 
+    @Cacheable(value = "products", key = "'category_'+#categoryId")
+    public List<ProductDto> getProductsByCategoryId(Integer categoryId) {
+        return ProductMapper.mapProductsToDto(productRepository.findByCategoryId(categoryId));
+    }
+
+    @Cacheable(value = "products", key = "#id")
     public ProductDto getProductById(Integer id) {
         Product product = findProductById(id);
-        return dtoMapper.mapProductToDto(product);
+        return ProductMapper.mapProductToDto(product);
     }
 
+    @CacheEvict(value = "products", allEntries = true)
     public ProductDto updateProductById(Integer id, ProductRequest request) {
         Product product = findProductById(id);
-        updateProductFields(product, request);
-        return dtoMapper.mapProductToDto(productRepository.save(product));
+        ProductMapper.updateProductFields(product, request);
+        return ProductMapper.mapProductToDto(productRepository.save(product));
     }
 
-    public String updateProductImageById(Integer id, MultipartFile image) {
-        String path = fileManager.uploadFile(image);
-
+    @CacheEvict(value = "products", allEntries = true)
+    public String updateProductImageById(Integer id, MultipartFile image, Boolean deleteImage) throws IOException {
         Product product = findProductById(id);
-        product.setImage(path);
-        productRepository.save(product);
 
+        String path = null;
+
+        //Delete main photo
+        if(Boolean.TRUE.equals(deleteImage) && product.getImage() != null && !product.getImage().isEmpty()) {
+            fileManager.deleteFile(product.getImage());
+            product.setImage(null);
+        }
+        //Add or update image
+        else if(image != null && !image.isEmpty()) {
+            path = fileManager.uploadFile(image);
+            //Delete old photo
+            if(product.getImage() != null && !product.getImage().isEmpty()) {
+                fileManager.deleteFile(product.getImage());
+            }
+            product.setImage(path);
+        }
+
+        productRepository.save(product);
         return path;
     }
 
+    @CacheEvict(value = "products", allEntries = true)
     public void deleteProductById(Integer id) {
         productRepository.deleteById(id);
     }
@@ -70,57 +92,5 @@ public class ProductService {
     private Product findProductById(Integer id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found"));
-    }
-
-    private Product mapRequestToProduct(ProductRequest request) {
-        Category category = Category.builder()
-                .id(request.getCategoryId())
-                .build();
-
-        Product product = Product.builder()
-                .name(request.getName())
-                .description(request.getDescription())
-                .category(category)
-                .build();
-
-        if(request.getVariants() != null) {
-            List<Variant> variants = request.getVariants().stream().map(r -> {
-                return Variant.builder()
-                        .name(r.getName())
-                        .price(r.getPrice())
-                        .product(product)
-                        .build();
-            }).toList();
-            product.setVariants(variants);
-        }
-
-        return product;
-    }
-
-    private void updateProductFields(Product product, ProductRequest request) {
-        if(request.getName() != null) {
-            product.setName(request.getName());
-        }
-        if(request.getDescription() != null) {
-            product.setDescription(request.getDescription());
-        }
-        if(request.getCategoryId() != null) {
-            Category category = Category.builder()
-                    .id(request.getCategoryId())
-                    .build();
-            product.setCategory(category);
-        }
-        if(request.getVariants() != null && !request.getVariants().isEmpty()) {
-            List<Variant> variants = request.getVariants().stream().map(r -> {
-                return Variant.builder()
-                        .name(r.getName())
-                        .price(r.getPrice())
-                        .product(product)
-                        .build();
-            }).toList();
-
-            product.getVariants().clear();
-            product.getVariants().addAll(variants);
-        }
     }
 }

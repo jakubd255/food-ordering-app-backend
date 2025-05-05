@@ -7,8 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.jakubdudek.foodorderingappbackend.model.dto.request.LoginRequest;
 import pl.jakubdudek.foodorderingappbackend.model.dto.request.RegisterRequest;
+import pl.jakubdudek.foodorderingappbackend.model.dto.request.UpdatePasswordRequest;
 import pl.jakubdudek.foodorderingappbackend.model.dto.response.SessionDto;
-import pl.jakubdudek.foodorderingappbackend.model.dto.response.UserDto;
+import pl.jakubdudek.foodorderingappbackend.model.dto.response.UserFullDto;
 import pl.jakubdudek.foodorderingappbackend.service.AuthenticationService;
 import pl.jakubdudek.foodorderingappbackend.util.session.CookieManager;
 
@@ -33,8 +34,19 @@ public class AuthenticationController {
         return ResponseEntity.ok(session);
     }
 
+    @PostMapping("/log-out")
+    public ResponseEntity<String> logOut(HttpServletResponse response) {
+        cookieManager.removeCookies(response);
+        return ResponseEntity.ok("Logged out");
+    }
+
     @GetMapping
-    public ResponseEntity<UserDto> authenticate() {
+    public ResponseEntity<UserFullDto> authenticate() {
         return ResponseEntity.ok(authenticationService.authenticate());
+    }
+
+    @PutMapping("/update-password")
+    public ResponseEntity<String> updatePassword(@RequestBody @Valid UpdatePasswordRequest request) {
+        return ResponseEntity.ok(authenticationService.updatePassword(request));
     }
 }

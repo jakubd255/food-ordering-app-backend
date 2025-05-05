@@ -9,6 +9,7 @@ import pl.jakubdudek.foodorderingappbackend.model.dto.request.ProductRequest;
 import pl.jakubdudek.foodorderingappbackend.model.dto.response.ProductDto;
 import pl.jakubdudek.foodorderingappbackend.service.ProductService;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -28,8 +29,13 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductDto>> getAllProducts(@RequestParam(required = false) Integer categoryId) {
-        return ResponseEntity.ok(productService.getAllProducts(categoryId));
+    public ResponseEntity<List<ProductDto>> getAllProducts() {
+        return ResponseEntity.ok(productService.getAllProducts());
+    }
+
+    @GetMapping("/category/{id}")
+    public ResponseEntity<List<ProductDto>> getProductsByCategoryId(@PathVariable Integer id) {
+        return ResponseEntity.ok(productService.getProductsByCategoryId(id));
     }
 
     @GetMapping("/{id}")
@@ -43,8 +49,12 @@ public class ProductController {
     }
 
     @PutMapping("/{id}/image")
-    public ResponseEntity<String> updateProductImageById(@PathVariable Integer id, @RequestParam("image") MultipartFile image) {
-        return ResponseEntity.ok(productService.updateProductImageById(id, image));
+    public ResponseEntity<String> updateProductImageById(
+            @PathVariable Integer id,
+            @RequestParam(value = "image", required = false) MultipartFile image,
+            @RequestParam(value = "deleteImage", required = false) Boolean deleteImage
+    ) throws IOException {
+        return ResponseEntity.ok(productService.updateProductImageById(id, image, deleteImage));
     }
 
     @DeleteMapping("/{id}")

@@ -1,10 +1,13 @@
 package pl.jakubdudek.foodorderingappbackend.model.entity;
 
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
+import pl.jakubdudek.foodorderingappbackend.model.json.Address;
 import pl.jakubdudek.foodorderingappbackend.model.type.OrderStatus;
 import pl.jakubdudek.foodorderingappbackend.model.type.OrderType;
 
@@ -38,11 +41,16 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderType type;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
     private Address address;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
+
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
+    private Restaurant restaurant;
 
     @PrePersist
     public void onCreate() {

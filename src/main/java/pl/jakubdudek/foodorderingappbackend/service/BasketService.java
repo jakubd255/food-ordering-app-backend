@@ -10,7 +10,7 @@ import pl.jakubdudek.foodorderingappbackend.model.entity.Product;
 import pl.jakubdudek.foodorderingappbackend.model.entity.User;
 import pl.jakubdudek.foodorderingappbackend.repository.BasketItemRepository;
 import pl.jakubdudek.foodorderingappbackend.repository.ProductRepository;
-import pl.jakubdudek.foodorderingappbackend.util.DtoMapper;
+import pl.jakubdudek.foodorderingappbackend.util.mapper.BasketMapper;
 import pl.jakubdudek.foodorderingappbackend.util.session.SessionManager;
 
 import java.util.List;
@@ -21,7 +21,6 @@ public class BasketService {
     private final BasketItemRepository basketItemRepository;
     private final ProductRepository productRepository;
     private final SessionManager sessionManager;
-    private final DtoMapper dtoMapper;
 
     public BasketItemDto addItemToBasket(BasketItemRequest request) {
         Product product = productRepository.findById(request.getProductId())
@@ -37,10 +36,9 @@ public class BasketService {
             throw new IllegalArgumentException("Invalid product variant");
         }
 
-        User user = sessionManager.getUser();
-        basketItem.setBasket(user.getBasket());
+        basketItem.setUser(sessionManager.getUser());
 
-        return dtoMapper.mapBasketItemToDto(basketItemRepository.save(basketItem));
+        return BasketMapper.mapBasketItemToDto(basketItemRepository.save(basketItem));
     }
 
     public List<BasketItemDto> addItemsToBasket(List<BasketItemRequest> request) {
@@ -49,12 +47,11 @@ public class BasketService {
 
     public List<BasketItemDto> getAllBasketItems() {
         User user = sessionManager.getUser();
-        return basketItemRepository.findAllByUserId(user.getId()).stream().map(dtoMapper::mapBasketItemToDto).toList();
+        return BasketMapper.mapBasketItemsToDto(basketItemRepository.findAllByUserId(user.getId()));
     }
 
     public BasketItemDto updateBasketItem(Integer id, BasketItemRequest request) {
-        BasketItem item = basketItemRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Basket item not found"));
+        BasketItem item = findBasketItemById(id);
 
         if(request.getVariant() != null) {
             item.setVariant(request.getVariant());
@@ -63,13 +60,16 @@ public class BasketService {
             item.setQuantity(request.getQuantity());
         }
 
-        return dtoMapper.mapBasketItemToDto(basketItemRepository.save(item));
+        return BasketMapper.mapBasketItemToDto(basketItemRepository.save(item));
     }
 
     public void deleteItemFromBasket(Integer id) {
-        BasketItem basketItem = basketItemRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Basket item not found"));
+        BasketItem item = findBasketItemById(id);
+        basketItemRepository.delete(item);
+    }
 
-        basketItemRepository.delete(basketItem);
+    private BasketItem findBasketItemById(Integer id) {
+        return basketItemRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Basket item not found"));
     }
 }

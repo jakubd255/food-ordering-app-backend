@@ -4,13 +4,14 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
+import pl.jakubdudek.foodorderingappbackend.model.entity.Session;
 import pl.jakubdudek.foodorderingappbackend.model.entity.User;
-import pl.jakubdudek.foodorderingappbackend.repository.UserRepository;
+import pl.jakubdudek.foodorderingappbackend.repository.SessionRepository;
 
 @Component
 @AllArgsConstructor
 public class SessionExtractor {
-    private final UserRepository userRepository;
+    private final SessionRepository sessionRepository;
 
     private Integer extractAccessTokenFromHeader(HttpServletRequest request) {
         final String authHeader = request.getHeader("Authorization");
@@ -47,6 +48,12 @@ public class SessionExtractor {
         if(sessionId == null) {
             return null;
         }
-        return userRepository.findUserBySessionId(sessionId).orElse(null);
+        Session session = sessionRepository.findSessionById(sessionId).orElse(null);
+        if(session == null) {
+            return null;
+        }
+        else {
+            return session.getUser();
+        }
     }
 }

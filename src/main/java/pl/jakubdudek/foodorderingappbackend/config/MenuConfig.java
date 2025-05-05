@@ -1,3 +1,4 @@
+
 package pl.jakubdudek.foodorderingappbackend.config;
 
 import jakarta.annotation.PostConstruct;

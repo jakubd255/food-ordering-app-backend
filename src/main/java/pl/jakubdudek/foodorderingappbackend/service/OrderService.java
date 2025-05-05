@@ -10,7 +10,7 @@ import pl.jakubdudek.foodorderingappbackend.model.entity.User;
 import pl.jakubdudek.foodorderingappbackend.model.type.OrderStatus;
 import pl.jakubdudek.foodorderingappbackend.repository.BasketItemRepository;
 import pl.jakubdudek.foodorderingappbackend.repository.OrderRepository;
-import pl.jakubdudek.foodorderingappbackend.util.DtoMapper;
+import pl.jakubdudek.foodorderingappbackend.util.mapper.OrderMapper;
 import pl.jakubdudek.foodorderingappbackend.util.session.SessionManager;
 
 import java.util.List;
@@ -20,7 +20,6 @@ import java.util.List;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final BasketItemRepository basketItemRepository;
-    private final DtoMapper dtoMapper;
     private final SessionManager sessionManager;
 
     public OrderDto placeOrderWithAccount(OrderRequest request) {
@@ -37,13 +36,13 @@ public class OrderService {
                 .build();
 
         items.forEach(i -> {
-            i.setBasket(null);
+            i.setUser(null);
             i.setOrder(order);
         });
 
         order.setItems(items);
 
-        return dtoMapper.mapOrderToDto(orderRepository.save(order));
+        return OrderMapper.mapOrderToDto(orderRepository.save(order));
     }
 
     public OrderDto placeOrderWithoutAccount(OrderRequest request) {
@@ -54,10 +53,10 @@ public class OrderService {
                 .address(request.getAddress())
                 .build();
 
-        return dtoMapper.mapOrderToDto(orderRepository.save(order));
+        return OrderMapper.mapOrderToDto(orderRepository.save(order));
     }
 
     public List<OrderDto> getAllOrders() {
-        return orderRepository.findAll().stream().map(dtoMapper::mapOrderToDto).toList();
+        return OrderMapper.mapOrdersToDto(orderRepository.findAll());
     }
 }

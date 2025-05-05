@@ -1,15 +1,15 @@
 package pl.jakubdudek.foodorderingappbackend.model.type;
 
-import org.springframework.security.core.GrantedAuthority;
+//import org.springframework.security.core.GrantedAuthority;
 
-public enum UserRole implements GrantedAuthority {
-    ROLE_USER,
-    ROLE_ADMIN,
-    ROLE_MANAGER,
-    ROLE_WORKER;
+public enum UserRole {
+    USER,
+    ADMIN,
+    MANAGER,
+    WORKER;
 
-    @Override
+    /*@Override
     public String getAuthority() {
-        return name();
-    }
+        return "ROLE_"+name();
+    }*/
 }

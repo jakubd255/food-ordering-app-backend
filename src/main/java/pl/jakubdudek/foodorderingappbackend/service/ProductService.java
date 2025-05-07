@@ -43,7 +43,7 @@ public class ProductService {
 
     @Cacheable(value = "products", key = "'category_'+#categoryId")
     public List<ProductDto> getProductsByCategoryId(Integer categoryId) {
-        return ProductMapper.mapProductsToDto(productRepository.findByCategoryId(categoryId));
+        return ProductMapper.mapProductsToDto(productRepository.findProductByCategoryId(categoryId));
     }
 
     @Cacheable(value = "products", key = "#id")

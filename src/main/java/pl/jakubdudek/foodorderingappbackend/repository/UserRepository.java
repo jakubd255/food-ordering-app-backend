@@ -1,7 +1,9 @@
 package pl.jakubdudek.foodorderingappbackend.repository;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import pl.jakubdudek.foodorderingappbackend.model.type.UserRole;
 import pl.jakubdudek.foodorderingappbackend.model.entity.User;
@@ -14,9 +16,10 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("SELECT COUNT(DISTINCT u) FROM User u JOIN u.roles r WHERE r.role = :role")
     int countByRole(UserRole role);
 
-    @Query("SELECT u FROM User u JOIN FETCH u.roles r LEFT JOIN FETCH r.restaurant")
+    @EntityGraph(attributePaths = {"roles", "roles.restaurant"})
     Optional<User> findByEmail(String email);
 
+    @NonNull
     @Query("SELECT u FROM User u JOIN FETCH u.roles r LEFT JOIN FETCH r.restaurant ORDER BY u.id ASC")
     List<User> findAll();
 

@@ -1,5 +1,6 @@
 package pl.jakubdudek.foodorderingappbackend.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,15 +22,22 @@ public class AuthenticationController {
     private final CookieManager cookieManager;
 
     @PostMapping("/register")
-    public ResponseEntity<SessionDto> register(@RequestBody @Valid RegisterRequest request, HttpServletResponse response) {
-        SessionDto session = authenticationService.register(request);
+    public ResponseEntity<SessionDto> register(
+            @RequestBody @Valid RegisterRequest request,
+            @CookieValue(name = "basket-items", required = false) String cookie,
+            HttpServletResponse response) {
+        SessionDto session = authenticationService.register(request, cookie);
         cookieManager.addCookie(response, session.id());
         return ResponseEntity.ok(session);
     }
 
     @PostMapping("/log-in")
-    public ResponseEntity<SessionDto> login(@RequestBody @Valid LoginRequest request, HttpServletResponse response) {
-        SessionDto session = authenticationService.login(request);
+    public ResponseEntity<SessionDto> login(
+            @RequestBody @Valid LoginRequest request,
+            @CookieValue(name = "basket-items", required = false) String cookie,
+            HttpServletResponse response
+    ) {
+        SessionDto session = authenticationService.login(request, cookie);
         cookieManager.addCookie(response, session.id());
         return ResponseEntity.ok(session);
     }

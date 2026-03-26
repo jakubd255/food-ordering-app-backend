@@ -10,9 +10,11 @@ import org.hibernate.annotations.Type;
 import pl.jakubdudek.foodorderingappbackend.model.json.Address;
 import pl.jakubdudek.foodorderingappbackend.model.type.OrderStatus;
 import pl.jakubdudek.foodorderingappbackend.model.type.OrderType;
+import pl.jakubdudek.foodorderingappbackend.util.OrderPriceCalculator;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "orders")
@@ -25,6 +27,9 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(unique = true)
+    private String token;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -33,10 +38,9 @@ public class Order {
     private List<BasketItem> items;
 
     private Date date;
-
     private Float total;
-
     private String message;
+    private String replyMessage;
 
     @Enumerated(EnumType.STRING)
     private OrderType type;
@@ -44,6 +48,9 @@ public class Order {
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
     private Address address;
+
+    private String phone;
+    private String email;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
@@ -55,14 +62,7 @@ public class Order {
     @PrePersist
     public void onCreate() {
         this.date = new Date();
-
-        float price = 0;
-
-        for(BasketItem item : items) {
-            Variant variant = item.getProduct().getVariants().get(item.getVariant());
-            price += variant.getPrice();
-        }
-
-        this.total = price;
+        this.total = OrderPriceCalculator.calculateOrderPrice(this);
+        this.token = UUID.randomUUID().toString();
     }
 }

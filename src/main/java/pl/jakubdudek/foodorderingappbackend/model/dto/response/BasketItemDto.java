@@ -2,7 +2,7 @@ package pl.jakubdudek.foodorderingappbackend.model.dto.response;
 
 public record BasketItemDto(
         Integer id,
-        Integer productId,
+        ProductDto product,
         Integer quantity,
         Integer variant
 ) {

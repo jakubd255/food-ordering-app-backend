@@ -1,4 +1,4 @@
-package pl.jakubdudek.foodorderingappbackend.util.validation;
+package pl.jakubdudek.foodorderingappbackend.util.validation.phone;
 
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import jakarta.validation.ConstraintValidator;

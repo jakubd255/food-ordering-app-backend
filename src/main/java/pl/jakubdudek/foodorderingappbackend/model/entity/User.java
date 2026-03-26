@@ -5,12 +5,11 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import pl.jakubdudek.foodorderingappbackend.model.json.Address;
+import pl.jakubdudek.foodorderingappbackend.util.mapper.RoleMapper;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -52,9 +51,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getAuthority()))
-                .collect(Collectors.toSet());
+        return RoleMapper.mapRolesToAuthorities(roles);
     }
 
     @Override

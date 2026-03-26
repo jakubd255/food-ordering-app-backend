@@ -16,8 +16,8 @@ public class UserMapper {
         return new UserDto(
                 user.getId(),
                 user.getName(),
-                user.getEmail()
-               // user.getRoles().stream().map(Role::getRole).toList()
+                user.getEmail(),
+                user.getPhone()
         );
     }
 
@@ -29,8 +29,10 @@ public class UserMapper {
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
+                user.getPhone(),
                 user.getRoles().stream().map(role -> new RoleDto(
                         role.getAuthority(),
+                        role.getRole(),
                         role.getRestaurant() != null ? new RestaurantShortDto(
                                 role.getRestaurant().getId(),
                                 role.getRestaurant().getName(),

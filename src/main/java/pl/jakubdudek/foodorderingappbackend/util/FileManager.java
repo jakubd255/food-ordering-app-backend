@@ -21,9 +21,7 @@ public class FileManager {
 
     public String uploadFile(MultipartFile file) {
         try {
-            if(file.isEmpty()) {
-                return "File is empty";
-            }
+            if(file.isEmpty()) return "File is empty";
 
             String originalFileName = file.getOriginalFilename();
             String uniqueFileName = UUID.randomUUID()+"_"+originalFileName;

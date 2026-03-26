@@ -9,14 +9,17 @@ public class OrderMapper {
     public static OrderDto mapOrderToDto(Order order) {
         return new OrderDto(
                 order.getId(),
+                order.getToken(),
                 UserMapper.mapUserToDto(order.getUser()),
                 order.getItems().stream().map(BasketMapper::mapBasketItemToDto).toList(),
                 order.getDate(),
                 order.getTotal(),
                 order.getMessage(),
+                order.getReplyMessage(),
                 order.getType(),
                 order.getStatus(),
-                AddressMapper.mapAddressToDto(order.getAddress())
+                AddressMapper.mapAddressToDto(order.getAddress()),
+                order.getRestaurant().getId()
         );
     }
 

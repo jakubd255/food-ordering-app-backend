@@ -8,13 +8,16 @@ import java.util.List;
 
 public record OrderDto(
         Integer id,
+        String token,
         UserDto user,
         List<BasketItemDto> items,
         Date date,
         Float total,
         String message,
+        String replyMessage,
         OrderType type,
         OrderStatus status,
-        AddressDto address
+        AddressDto address,
+        Integer restaurantId
 ) {
 }

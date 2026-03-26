@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import pl.jakubdudek.foodorderingappbackend.model.dto.request.UpdateRoleByEmailRequest;
-import pl.jakubdudek.foodorderingappbackend.model.dto.request.UpdateRoleRequest;
 import pl.jakubdudek.foodorderingappbackend.model.dto.request.UserAddressUpdateRequest;
 import pl.jakubdudek.foodorderingappbackend.model.dto.request.UserUpdateRequest;
 import pl.jakubdudek.foodorderingappbackend.model.dto.response.UserDto;
@@ -37,6 +35,12 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') OR hasAuthority('ROLE_MANAGER_'+#id)")
+    @GetMapping("/restaurant/{id}")
+    public ResponseEntity<List<UserFullDto>> getRestaurantWorkersById(@PathVariable Integer id) {
+        return ResponseEntity.ok(userService.getRestaurantWorkersById(id));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable Integer id, @RequestBody @Valid UserUpdateRequest request) {
         return ResponseEntity.ok(userService.updateUserById(id, request));
@@ -46,18 +50,6 @@ public class UserController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN') OR #authentication.principal.id == #id")
     public ResponseEntity<UserDto> updateUser(@PathVariable Integer id, @RequestBody @Valid UserAddressUpdateRequest request) {
         return ResponseEntity.ok(userService.updateUserAddressById(id, request));
-    }
-
-    @PutMapping("/{id}/role/admin")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<UserFullDto> updateUserRoleAdmin(@PathVariable Integer id) {
-        return ResponseEntity.ok(userService.updateUserRoleAdmin(id));
-    }
-
-    @PutMapping("/{id}/role/restaurant")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN') OR hasAuthority('ROLE_MANAGER_'+#id)")
-    public ResponseEntity<UserFullDto> updateUserRoleRestaurant(@PathVariable Integer id, @RequestBody @Valid UpdateRoleRequest request) {
-        return ResponseEntity.ok(userService.updateUserRoleRestaurant(id, request));
     }
 
     @DeleteMapping("/{id}")

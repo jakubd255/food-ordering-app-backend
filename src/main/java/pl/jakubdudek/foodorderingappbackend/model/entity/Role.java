@@ -35,7 +35,6 @@ public class Role implements GrantedAuthority {
         if((role.equals(UserRole.MANAGER) || role.equals(UserRole.WORKER) && restaurant != null)) {
             return "ROLE_"+role.name()+"_"+restaurant.getId();
         }
-
         return "ROLE_"+role.name();
     }
 }

@@ -3,12 +3,11 @@ package pl.jakubdudek.foodorderingappbackend.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.jakubdudek.foodorderingappbackend.model.dto.request.RestaurantRequest;
-import pl.jakubdudek.foodorderingappbackend.model.dto.response.RestaurantDto;
-import pl.jakubdudek.foodorderingappbackend.model.dto.response.RestaurantPhotosDto;
-import pl.jakubdudek.foodorderingappbackend.model.dto.response.RestaurantShortDto;
+import pl.jakubdudek.foodorderingappbackend.model.dto.response.*;
 import pl.jakubdudek.foodorderingappbackend.service.RestaurantService;
 
 import java.io.IOException;
@@ -40,11 +39,13 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurantService.getRestaurantById(id));
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') OR hasAuthority('ROLE_MANAGER_'+#id)")
     @PutMapping("/{id}")
     public ResponseEntity<RestaurantDto> updateRestaurantById(@PathVariable Integer id, @RequestBody RestaurantRequest request) {
         return ResponseEntity.ok(restaurantService.updateRestaurantById(id, request));
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') OR hasAuthority('ROLE_MANAGER_'+#id)")
     @PutMapping("/{id}/photos")
     public ResponseEntity<RestaurantPhotosDto> updateRestaurantPhotosById(
             @PathVariable Integer id,
@@ -56,6 +57,7 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurantService.updateRestaurantPhotosById(id, mainPhoto, deleteMainPhoto, newPhotos, deletePhotos));
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') OR hasAuthority('ROLE_MANAGER_'+#id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteRestaurantById(@PathVariable Integer id) {
         restaurantService.deleteRestaurantById(id);

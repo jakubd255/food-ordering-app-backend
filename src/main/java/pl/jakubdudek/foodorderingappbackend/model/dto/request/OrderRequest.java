@@ -8,23 +8,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.jakubdudek.foodorderingappbackend.model.json.Address;
 import pl.jakubdudek.foodorderingappbackend.model.type.OrderType;
-import pl.jakubdudek.foodorderingappbackend.util.validation.ValidOrderRequest;
+import pl.jakubdudek.foodorderingappbackend.util.validation.orderrequest.ValidOrderRequest;
 
-import java.util.List;
-
+@ValidOrderRequest
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ValidOrderRequest
 public class OrderRequest {
+    @NotNull
+    private Integer restaurantId;
+
     private String message;
 
     @NotNull
     private OrderType type;
 
     @Valid
-    private List<@Valid BasketItemRequest> items;
-
     private Address address;
 }

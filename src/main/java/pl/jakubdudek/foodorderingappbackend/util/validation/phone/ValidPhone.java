@@ -1,4 +1,4 @@
-package pl.jakubdudek.foodorderingappbackend.util.validation;
+package pl.jakubdudek.foodorderingappbackend.util.validation.phone;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

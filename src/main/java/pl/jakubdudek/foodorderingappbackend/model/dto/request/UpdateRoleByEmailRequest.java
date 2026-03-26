@@ -21,5 +21,4 @@ public class UpdateRoleByEmailRequest {
 
     @NotNull
     private UserRole role;
-    private Integer restaurantId;
 }

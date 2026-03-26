@@ -9,13 +9,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pl.jakubdudek.foodorderingappbackend.model.dto.request.ProductRequest;
 import pl.jakubdudek.foodorderingappbackend.model.dto.response.ProductDto;
+import pl.jakubdudek.foodorderingappbackend.model.entity.Category;
 import pl.jakubdudek.foodorderingappbackend.model.entity.Product;
+import pl.jakubdudek.foodorderingappbackend.model.entity.Variant;
 import pl.jakubdudek.foodorderingappbackend.repository.ProductRepository;
 import pl.jakubdudek.foodorderingappbackend.util.FileManager;
 import pl.jakubdudek.foodorderingappbackend.util.mapper.ProductMapper;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -55,7 +58,27 @@ public class ProductService {
     @CacheEvict(value = "products", allEntries = true)
     public ProductDto updateProductById(Integer id, ProductRequest request) {
         Product product = findProductById(id);
-        ProductMapper.updateProductFields(product, request);
+        Optional.ofNullable(request.getName()).ifPresent(product::setName);
+        Optional.ofNullable(request.getDescription()).ifPresent(product::setDescription);
+
+        Optional.ofNullable(request.getCategoryId())
+                .map(c -> Category.builder().id(c).build())
+                .ifPresent(product::setCategory);
+
+        Optional.ofNullable(request.getVariants())
+                .filter(list -> !list.isEmpty())
+                .map(list -> list.stream()
+                        .map(r -> Variant.builder()
+                                .name(r.getName())
+                                .price(r.getPrice())
+                                .product(product)
+                                .build())
+                        .toList())
+                .ifPresent(variants -> {
+                    product.getVariants().clear();
+                    product.getVariants().addAll(variants);
+                });
+
         return ProductMapper.mapProductToDto(productRepository.save(product));
     }
 

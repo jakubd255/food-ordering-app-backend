@@ -9,7 +9,7 @@ public class BasketMapper {
     public static BasketItemDto mapBasketItemToDto(BasketItem basketItem) {
         return new BasketItemDto(
                 basketItem.getId(),
-                basketItem.getProduct().getId(),
+                ProductMapper.mapProductToDto(basketItem.getProduct()),
                 basketItem.getQuantity(),
                 basketItem.getVariant()
         );

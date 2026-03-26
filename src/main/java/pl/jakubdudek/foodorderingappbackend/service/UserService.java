@@ -1,21 +1,16 @@
 package pl.jakubdudek.foodorderingappbackend.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pl.jakubdudek.foodorderingappbackend.exception.EmailAlreadyExistsException;
-import pl.jakubdudek.foodorderingappbackend.model.dto.request.UpdateRoleRequest;
 import pl.jakubdudek.foodorderingappbackend.model.dto.request.UserAddressUpdateRequest;
 import pl.jakubdudek.foodorderingappbackend.model.dto.request.UserUpdateRequest;
 import pl.jakubdudek.foodorderingappbackend.model.dto.response.UserFullDto;
-import pl.jakubdudek.foodorderingappbackend.model.entity.Restaurant;
 import pl.jakubdudek.foodorderingappbackend.model.entity.User;
 import pl.jakubdudek.foodorderingappbackend.model.dto.response.UserDto;
-import pl.jakubdudek.foodorderingappbackend.model.type.UserRole;
-import pl.jakubdudek.foodorderingappbackend.repository.RestaurantRepository;
 import pl.jakubdudek.foodorderingappbackend.repository.UserRepository;
-import pl.jakubdudek.foodorderingappbackend.util.RoleManager;
 import pl.jakubdudek.foodorderingappbackend.util.mapper.UserMapper;
 
 import java.util.List;
@@ -25,19 +20,26 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final RestaurantRepository restaurantRepository;
 
     public List<UserDto> getAllUsers() {
-        return UserMapper.mapUsersToDto(userRepository.findAll());
+        Sort sort = Sort.by(Sort.Direction.ASC, "id");
+        return UserMapper.mapUsersToDto(userRepository.findAll(sort));
     }
 
     public List<UserFullDto> getAllUsersAdmin() {
-        return UserMapper.mapUsersToFullDto(userRepository.findAll());
+        Sort sort = Sort.by(Sort.Direction.ASC, "id");
+        return UserMapper.mapUsersToFullDto(userRepository.findAll(sort));
     }
 
     public UserDto getUserById(Integer id) {
         User user = findUserById(id);
         return UserMapper.mapUserToDto(user);
+    }
+
+    public List<UserFullDto> getRestaurantWorkersById(Integer id) {
+        Sort sort = Sort.by(Sort.Direction.ASC, "id");
+        List<User> workers = userRepository.findByRestaurantId(id, sort);
+        return UserMapper.mapUsersToFullDto(workers);
     }
 
     public UserDto updateUserById(Integer id, UserUpdateRequest request) {
@@ -60,31 +62,6 @@ public class UserService {
         User user = findUserById(id);
         user.setAddress(request.getAddress());
         return UserMapper.mapUserToDto(userRepository.save(user));
-    }
-
-    @Transactional
-    public UserFullDto updateUserRoleAdmin(Integer id) {
-        User user = findUserById(id);
-        RoleManager.toggleAdmin(user);
-        return UserMapper.mapUserToFullDto(userRepository.save(user));
-    }
-
-    @Transactional
-    public UserFullDto updateUserRoleRestaurant(Integer id, UpdateRoleRequest request) {
-        User user = findUserById(id);
-
-        UserRole role = request.getRole();
-        Integer restaurantId = request.getRestaurantId();
-        boolean isRestaurantRole = role == UserRole.MANAGER || role == UserRole.WORKER;
-
-        //Update role related to the restaurant
-        if(isRestaurantRole && restaurantId != null) {
-            Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                    .orElseThrow(() -> new EntityNotFoundException("Restaurant not found"));
-            RoleManager.toggleRestaurantRole(user, role, restaurant);
-        }
-
-        return UserMapper.mapUserToFullDto(userRepository.save(user));
     }
 
     public void deleteUserById(Integer id) {

@@ -53,6 +53,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/categories").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products", "/api/products/{id}", "/api/products/category/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/restaurants", "/api/restaurants/short").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/orders/{token}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/orders/without-account").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/files/{name}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/orders").permitAll()
                         .anyRequest().authenticated()

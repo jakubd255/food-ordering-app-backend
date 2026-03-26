@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import pl.jakubdudek.foodorderingappbackend.util.validation.ValidPhone;
+import pl.jakubdudek.foodorderingappbackend.util.validation.phone.ValidPhone;
 
 @Builder
 @Data

@@ -8,6 +8,7 @@ public record UserFullDto(
         Integer id,
         String name,
         String email,
+        String phone,
         List<RoleDto> roles,
         Address address
 ) {

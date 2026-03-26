@@ -11,24 +11,4 @@ public class SessionManager {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (User)authentication.getPrincipal();
     }
-
-    public boolean isAuthenticated() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return false;
-        }
-        else {
-            return !authentication.getName().equals("anonymousUser");
-        }
-    }
-
-    public Integer getUserId() {
-        User user = getUser();
-        if(user != null) {
-            return user.getId();
-        }
-        else {
-            return -1;
-        }
-    }
 }

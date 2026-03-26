@@ -32,7 +32,7 @@ public class BasketCookieExtractor {
     }
 
     private BasketItem mapToBasketItem(BasketItemDto dto, User user) {
-        Product product = Product.builder().id(dto.productId()).build();
+        Product product = Product.builder().id(dto.product().id()).build();
 
         return BasketItem.builder()
                 .user(user)

@@ -1,4 +1,4 @@
-package pl.jakubdudek.foodorderingappbackend.util.validation;
+package pl.jakubdudek.foodorderingappbackend.util.validation.orderrequest;
 
 import jakarta.validation.Constraint;
 import org.springframework.messaging.handler.annotation.Payload;

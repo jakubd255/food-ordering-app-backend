@@ -5,13 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.jakubdudek.foodorderingappbackend.model.type.UserRole;
+import pl.jakubdudek.foodorderingappbackend.model.type.OrderStatus;
 
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateRoleRequest {
+public class UpdateOrderRequest {
     @NotNull
-    private UserRole role;
+    private OrderStatus status;
+
+    private String replyMessage;
 }

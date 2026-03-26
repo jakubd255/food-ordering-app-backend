@@ -1,42 +1,41 @@
 package pl.jakubdudek.foodorderingappbackend.model.dto.request;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.jakubdudek.foodorderingappbackend.model.json.Address;
-import pl.jakubdudek.foodorderingappbackend.model.json.WorkingHours;
+import pl.jakubdudek.foodorderingappbackend.model.type.OrderType;
 import pl.jakubdudek.foodorderingappbackend.util.validation.phone.ValidPhone;
 
-@Data
+import java.util.List;
+
 @Builder
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RestaurantRequest {
+public class OrderWithoutAccountRequest {
     @NotNull
-    @NotEmpty
-    private String name;
+    private Integer restaurantId;
+
+    private String message;
 
     @NotNull
-    @NotEmpty
-    private String slug;
+    private OrderType type;
 
-    @NotNull
+    @Valid
+    private List<@Valid BasketItemRequest> items;
+
     private Address address;
 
     @NotNull
-    @NotEmpty
     @ValidPhone
     private String phone;
 
     @NotNull
-    @NotEmpty
     @Email
     private String email;
-
-    @NotNull
-    private WorkingHours workingHours;
 }

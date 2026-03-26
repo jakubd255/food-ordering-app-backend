@@ -59,31 +59,4 @@ public class ProductMapper {
     public static List<Product> mapRequestsToProducts(List<ProductRequest> requests) {
         return requests.stream().map(ProductMapper::mapRequestToProduct).toList();
     }
-
-    public static void updateProductFields(Product product, ProductRequest request) {
-        if(request.getName() != null) {
-            product.setName(request.getName());
-        }
-        if(request.getDescription() != null) {
-            product.setDescription(request.getDescription());
-        }
-        if(request.getCategoryId() != null) {
-            Category category = Category.builder()
-                    .id(request.getCategoryId())
-                    .build();
-            product.setCategory(category);
-        }
-        if(request.getVariants() != null && !request.getVariants().isEmpty()) {
-            List<Variant> variants = request.getVariants().stream().map(r -> {
-                return Variant.builder()
-                        .name(r.getName())
-                        .price(r.getPrice())
-                        .product(product)
-                        .build();
-            }).toList();
-
-            product.getVariants().clear();
-            product.getVariants().addAll(variants);
-        }
-    }
 }
